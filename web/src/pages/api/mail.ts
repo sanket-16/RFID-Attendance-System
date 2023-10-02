@@ -12,7 +12,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const emailHtml = render(Email());
+  const emailHtml = render(
+    Email({ email: "san162002@gmail.com", name: "Sanket Patil" })
+  );
 
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",

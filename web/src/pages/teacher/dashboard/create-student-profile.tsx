@@ -4,7 +4,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -12,7 +11,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -20,13 +18,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signIn } from "next-auth/react";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { hash } from "bcryptjs-react";
 import { useMutation } from "@tanstack/react-query";
 import { createNewUser } from "@/lib/api";
+import { useToast } from "@/components/ui/use-toast";
+import { CheckCheck } from "lucide-react";
 
 const formSchema = z
   .object({
@@ -49,7 +48,7 @@ const formSchema = z
 
 const SignUp = () => {
   const [checked, setChecked] = useState<boolean>(false);
-
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -65,9 +64,20 @@ const SignUp = () => {
   const mutate = useMutation({
     mutationKey: ["createUser"],
     mutationFn: createNewUser,
+    onSuccess: (data) => {
+      form.reset();
+      toast({
+        variant: "default",
+        action: (
+          <div className="flex items-start justify-start gap-2 w-full">
+            <CheckCheck className="text-green-500" />
+            <span>Successfully created new user.</span>
+          </div>
+        ),
+      });
+    },
   });
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // event.preventDefault();
     const {
       email,
       firstName,
@@ -78,12 +88,6 @@ const SignUp = () => {
     const password = await hash(initialPass, 5);
     console.log(values);
     mutate.mutateAsync({ email, firstName, middleName, lastName, password });
-    // const res = await signIn("credentials", {
-    //   email: values.email,
-    //   password: values.password,
-    //   redirect: false,
-    // });
-    // console.log(res);
   };
 
   return (

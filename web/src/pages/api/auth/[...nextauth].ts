@@ -3,7 +3,9 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import { compare } from "bcrypt";
+
 const prisma = new PrismaClient();
+
 const authOptions: NextAuthOptions = {
   secret: process.env.NEXT_AUTH_SECRET,
   session: {
@@ -24,13 +26,25 @@ const authOptions: NextAuthOptions = {
           type: "password",
           placeholder: "my very secret password",
         },
+        role: {
+          label: "Role",
+          type: "select",
+          placeholder: "Student",
+        },
       },
       async authorize(credentials, req) {
-        const dbUser = await prisma.user.findUnique({
-          where: {
-            email: credentials?.email,
-          },
-        });
+        const dbUser =
+          credentials?.role === "Teacher"
+            ? await prisma.teacher.findUnique({
+                where: {
+                  email: credentials?.email,
+                },
+              })
+            : await prisma.student.findUnique({
+                where: {
+                  email: credentials?.email,
+                },
+              });
         if (!dbUser) {
           throw new Error("Invalid Credentails");
         }
@@ -43,13 +57,15 @@ const authOptions: NextAuthOptions = {
           id: dbUser.id,
           name: dbUser.firstName + " " + dbUser.lastName,
           email: dbUser.email,
+          role: credentials?.role,
         };
       },
     }),
   ],
   pages: {
-    signIn: "/sign-in",
-    newUser: "sign-up",
+    signIn: "/auth/sign-in",
+    newUser: "/auth/sign-up",
+    error: "/auth/sign-in",
   },
   callbacks: {
     session: ({ session, token }) => {

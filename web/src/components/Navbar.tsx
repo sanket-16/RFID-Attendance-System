@@ -1,7 +1,7 @@
 import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
 import { Button } from "./ui/button";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { Skeleton } from "./ui/skeleton";
 import {
   DropdownMenu,
@@ -18,7 +18,7 @@ import { Session } from "next-auth";
 const Menu = ({ data }: { data: Session }) => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button variant={"secondary"} className="flex items-center gap-2 py-4">
           <AvatarComponent
             classes="rounded-full"
@@ -44,7 +44,7 @@ const Menu = ({ data }: { data: Session }) => {
         <DropdownMenuItem>Billing</DropdownMenuItem>
         <DropdownMenuItem>Team</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Logout</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -52,6 +52,7 @@ const Menu = ({ data }: { data: Session }) => {
 
 const Navbar = () => {
   const { data, status } = useSession();
+  console.log(data);
   return (
     <nav className="min-w-full flex justify-between items-center py-6">
       <Link href="/" className="text-xl font-bold">

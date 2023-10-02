@@ -18,6 +18,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
 import { Label } from "@/components/ui/label";
@@ -26,6 +33,9 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { hash } from "bcryptjs-react";
+import { X } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/router";
 
 const formSchema = z.object({
   email: z
@@ -33,11 +43,15 @@ const formSchema = z.object({
     .min(2, { message: "This field has to be filled." })
     .email("This is not a valid email."),
   password: z.string().min(2, { message: "Please enter a valid password" }),
+  role: z.enum(["Teacher", "Student"]),
 });
 
 const SignIn = () => {
-  const [checked, setChecked] = useState<boolean>(false);
+  const router = useRouter();
+  const { error } = router.query;
 
+  const [checked, setChecked] = useState<boolean>(false);
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,72 +62,26 @@ const SignIn = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const password = await hash(values.password, 5);
 
-    // event.preventDefault();
-    console.log(values);
     const res = await signIn("credentials", {
       email: values.email,
       password: password,
-      redirect: false,
+      role: values.role,
+      redirect: true,
+      callbackUrl:
+        values.role === "Student"
+          ? `${process.env.NEXT_PUBLIC_URL}/student/dashboard`
+          : `${process.env.NEXT_PUBLIC_URL}/teacher/dashboard`,
     });
-    console.log(res);
   };
 
   return (
-    <div className="w-full flex items-center justify-center min-h-[60vh]">
+    <div className="w-full flex flex-col gap-4 items-center justify-center min-h-[60vh]">
       <Card className="md:w-3/5">
         <CardHeader>
           <CardTitle>Sign In</CardTitle>
           <CardDescription>Login to your account.</CardDescription>
         </CardHeader>
         <CardContent>
-          {/* <form
-            onSubmit={async (event) => {
-              // event.preventDefault();
-              console.log("hi");
-              // const res = await signIn("credentials", {
-              //   email: email,
-              //   password: password,
-              //   redirect: false,
-              // });
-              // console.log(res);
-            }}
-          >
-            <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder="sanketpatil@ternaengg.ac.in"
-                />
-              </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  type={checked ? "text" : "password"}
-                  placeholder="my very secret password"
-                />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="passcheck"
-                  checked={checked}
-                  onCheckedChange={(event) => setChecked((val) => !val)}
-                />
-                <label
-                  htmlFor="passcheck"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Show password
-                </label>
-              </div>
-            </div>
-          </form> */}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
@@ -149,6 +117,30 @@ const SignIn = () => {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Role</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Teacher">Teacher</SelectItem>
+                          <SelectItem value="Student">Student</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <div className="flex gap-2 text-muted-foreground items-center">
                 <Checkbox
                   checked={checked}
@@ -161,6 +153,12 @@ const SignIn = () => {
           </Form>
         </CardContent>
       </Card>
+      {error && (
+        <Card className="md:w-3/5 flex items-center gap-4 bg-red-500/20 border border-red-500 p-4">
+          <X />
+          {error}
+        </Card>
+      )}
     </div>
   );
 };
