@@ -1,6 +1,6 @@
-import { useStatus } from "@/lib/hooks/useStatus"
-import { Inter } from "next/font/google"
 import { useRouter } from "next/router"
+import { Inter } from "next/font/google"
+import { useStatus } from "@/lib/hooks/useStatus"
 
 const inter = Inter({ subsets: ["latin"] })
 

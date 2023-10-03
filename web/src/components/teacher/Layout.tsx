@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import { ReactElement, ReactNode } from "react"
 import { useRouter } from "next/router"
 import { useStatus } from "@/lib/hooks/useStatus"
 import Sidebar from "./Sidebar"
@@ -7,7 +7,7 @@ import { Card } from "../ui/card"
 export default function Layout({
   children,
 }: {
-  children: ReactElement | React.ReactNode
+  children: ReactElement | ReactNode
 }) {
   const router = useRouter()
   const { role } = useStatus()

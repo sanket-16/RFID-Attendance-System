@@ -1,4 +1,11 @@
 import { useState } from "react"
+import { useRouter } from "next/router"
+import { signIn } from "next-auth/react"
+import { X } from "lucide-react"
+import * as z from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { hash } from "bcryptjs-react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -26,16 +33,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-
 import { Label } from "@/components/ui/label"
-import { signIn } from "next-auth/react"
-import * as z from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { hash } from "bcryptjs-react"
-import { X } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
-import { useRouter } from "next/router"
 
 const formSchema = z.object({
   email: z

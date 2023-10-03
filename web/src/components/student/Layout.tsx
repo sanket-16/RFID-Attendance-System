@@ -1,12 +1,12 @@
-import React, { ReactElement } from "react"
-import Sidebar from "./Sidebar"
-import { useStatus } from "@/lib/hooks/useStatus"
 import { useRouter } from "next/router"
+import { ReactElement, ReactNode } from "react"
+import { useStatus } from "@/lib/hooks/useStatus"
+import Sidebar from "./Sidebar"
 
 export default function Layout({
   children,
 }: {
-  children: ReactElement | React.ReactNode
+  children: ReactElement | ReactNode
 }) {
   const router = useRouter()
   const { role } = useStatus()

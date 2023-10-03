@@ -1,9 +1,9 @@
 import type { AppProps } from "next/app"
-import { ThemeProvider } from "@/components/theme-provider"
-import Layout from "@/components/Layout"
-import "@/styles/globals.css"
 import { SessionProvider } from "next-auth/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import "@/styles/globals.css"
+import { ThemeProvider } from "@/components/theme-provider"
+import Layout from "@/components/Layout"
 
 const queryClient = new QueryClient()
 export default function App({ Component, pageProps }: AppProps) {

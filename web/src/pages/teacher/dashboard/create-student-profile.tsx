@@ -1,13 +1,11 @@
 import { useState } from "react"
+import { useMutation } from "@tanstack/react-query"
+import * as z from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { CheckCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
+import { CardContent, CardDescription } from "@/components/ui/card"
 import {
   Form,
   FormControl,
@@ -17,16 +15,9 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import * as z from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { hash } from "bcryptjs-react"
-import { useMutation } from "@tanstack/react-query"
-import { createNewUser } from "@/lib/api"
 import { useToast } from "@/components/ui/use-toast"
-import { CheckCheck } from "lucide-react"
 import Layout from "@/components/teacher/Layout"
+import { createNewUser } from "@/lib/api"
 
 const formSchema = z
   .object({

@@ -1,7 +1,10 @@
 import Link from "next/link"
+import { Session } from "next-auth"
+import { signIn, signOut, useSession } from "next-auth/react"
+//@ts-ignore
+import { AvatarComponent } from "avatar-initials"
 import ThemeToggle from "./ThemeToggle"
 import { Button } from "./ui/button"
-import { signIn, signOut, useSession } from "next-auth/react"
 import { Skeleton } from "./ui/skeleton"
 import {
   DropdownMenu,
@@ -11,9 +14,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
-//@ts-ignore
-import { AvatarComponent } from "avatar-initials"
-import { Session } from "next-auth"
 
 const Menu = ({ data }: { data: Session }) => {
   return (
