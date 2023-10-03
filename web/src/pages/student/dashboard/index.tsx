@@ -1,14 +1,14 @@
-import Layout from "@/components/student/Layout";
-import { useStatus } from "@/lib/hooks/useStatus";
-import { useSession } from "next-auth/react";
-import React from "react";
+import Layout from "@/components/student/Layout"
+import { CardDescription } from "@/components/ui/card"
 
 const StudentDashboard = () => {
   return (
     <Layout>
-      <div>StudentDashboard</div>
+      <>
+        <CardDescription>TeacherDashboard / Home</CardDescription>
+      </>
     </Layout>
-  );
-};
+  )
+}
 
-export default StudentDashboard;
+export default StudentDashboard

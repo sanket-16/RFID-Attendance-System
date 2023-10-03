@@ -1,10 +1,11 @@
-import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
+import Link from "next/link"
+import { Card, CardContent, CardDescription, CardHeader } from "../ui/card"
+import { useRouter } from "next/router"
 
 const tabs = [
   {
     name: "Home",
-    link: "/",
+    link: "",
   },
   {
     name: "Check Class Details",
@@ -18,27 +19,30 @@ const tabs = [
     name: "Create Class",
     link: "/create-class",
   },
-];
+]
 
 const Sidebar = () => {
+  const router = useRouter()
   return (
-    <Card className="col-span-3 border  h-full">
+    <Card className="col-span-3 h-full border">
       <CardHeader>
         <CardDescription>Teacher Dashboard</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col w-full gap-4">
+      <CardContent className="flex w-full flex-col gap-4">
         {tabs.map((tab) => (
           <Link
             href={`/teacher/dashboard${tab.link}`}
             key={tab.name}
-            className="px-4 py-3 hover:bg-secondary rounded-md"
+            className={`rounded-md px-4 py-3 hover:bg-secondary ${
+              router.route === `/teacher/dashboard${tab.link}` && "bg-secondary"
+            }`}
           >
             {tab.name}
           </Link>
         ))}
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default Sidebar;
+export default Sidebar

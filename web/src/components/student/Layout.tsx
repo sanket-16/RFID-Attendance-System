@@ -1,17 +1,17 @@
-import React, { ReactElement } from "react";
-import Sidebar from "./Sidebar";
-import { useStatus } from "@/lib/hooks/useStatus";
-import { useRouter } from "next/router";
+import React, { ReactElement } from "react"
+import Sidebar from "./Sidebar"
+import { useStatus } from "@/lib/hooks/useStatus"
+import { useRouter } from "next/router"
 
 export default function Layout({
   children,
 }: {
-  children: ReactElement | React.ReactNode;
+  children: ReactElement | React.ReactNode
 }) {
-  const router = useRouter();
-  const { role } = useStatus();
+  const router = useRouter()
+  const { role } = useStatus()
   if (role === "Teacher") {
-    router.push("/teacher/dashboard");
+    router.push("/teacher/dashboard")
   }
   return (
     <main className="w-full">
@@ -20,5 +20,5 @@ export default function Layout({
         <div className="col-span-9 border p-4 ">{children}</div>
       </div>
     </main>
-  );
+  )
 }

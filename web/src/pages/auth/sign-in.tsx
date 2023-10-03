@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -7,8 +7,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+} from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Form,
   FormControl,
@@ -17,25 +17,25 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/components/ui/form"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+} from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 
-import { Label } from "@/components/ui/label";
-import { signIn } from "next-auth/react";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { hash } from "bcryptjs-react";
-import { X } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { useRouter } from "next/router";
+import { Label } from "@/components/ui/label"
+import { signIn } from "next-auth/react"
+import * as z from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { hash } from "bcryptjs-react"
+import { X } from "lucide-react"
+import { useToast } from "@/components/ui/use-toast"
+import { useRouter } from "next/router"
 
 const formSchema = z.object({
   email: z
@@ -44,23 +44,23 @@ const formSchema = z.object({
     .email("This is not a valid email."),
   password: z.string().min(2, { message: "Please enter a valid password" }),
   role: z.enum(["Teacher", "Student"]),
-});
+})
 
 const SignIn = () => {
-  const router = useRouter();
-  const { error } = router.query;
+  const router = useRouter()
+  const { error } = router.query
 
-  const [checked, setChecked] = useState<boolean>(false);
-  const { toast } = useToast();
+  const [checked, setChecked] = useState<boolean>(false)
+  const { toast } = useToast()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
     },
-  });
+  })
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const password = await hash(values.password, 5);
+    const password = await hash(values.password, 5)
 
     const res = await signIn("credentials", {
       email: values.email,
@@ -71,12 +71,12 @@ const SignIn = () => {
         values.role === "Student"
           ? `${process.env.NEXT_PUBLIC_URL}/student/dashboard`
           : `${process.env.NEXT_PUBLIC_URL}/teacher/dashboard`,
-    });
-    localStorage.setItem("role", values.role);
-  };
+    })
+    localStorage.setItem("role", values.role)
+  }
 
   return (
-    <div className="w-full flex flex-col gap-4 items-center justify-center min-h-[60vh]">
+    <div className="flex min-h-[60vh] w-full flex-col items-center justify-center gap-4">
       <Card className="md:w-3/5">
         <CardHeader>
           <CardTitle>Sign In</CardTitle>
@@ -142,7 +142,7 @@ const SignIn = () => {
                   </FormItem>
                 )}
               />
-              <div className="flex gap-2 text-muted-foreground items-center">
+              <div className="flex items-center gap-2 text-muted-foreground">
                 <Checkbox
                   checked={checked}
                   onCheckedChange={() => setChecked((val) => !val)}
@@ -155,13 +155,13 @@ const SignIn = () => {
         </CardContent>
       </Card>
       {error && (
-        <Card className="md:w-3/5 flex items-center gap-4 bg-red-500/20 border border-red-500 p-4">
+        <Card className="flex items-center gap-4 border border-red-500 bg-red-500/20 p-4 md:w-3/5">
           <X />
           {error}
         </Card>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default SignIn;
+export default SignIn

@@ -14,51 +14,37 @@ import {
   Section,
   Tailwind,
   Text,
-} from "@react-email/components";
-import * as React from "react";
+} from "@react-email/components"
 
 const AttendanceRecordEmail = ({
   email,
   name,
+  entryTime,
 }: {
-  email: string;
-  name: string;
+  email: string
+  name: string
+  entryTime: string
 }) => {
-  const previewText = `${name} , welcome to rfid attendance system...`;
+  const previewText = `${name} ,your attendance has been marked.`
 
   return (
     <Html>
       <Head />
       <Preview>{previewText}</Preview>
       <Tailwind>
-        <Body className="bg-white my-auto mx-auto font-sans">
-          <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] w-[465px]">
-            <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
+        <Body className="mx-auto my-auto bg-white font-sans">
+          <Container className="mx-auto my-[40px] w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]">
+            <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-black">
               <strong>RFID Attendance System</strong>
             </Heading>
-            <Text className="text-[#666666] text-[12px] leading-[24px]">
+            <Text className="text-[12px] leading-[24px] text-[#666666]">
               <strong>Hi {name}</strong>,
             </Text>
-            <Text className="text-black text-[14px] leading-[24px]">
-              Email: {email}
+            <Text className="text-[14px] leading-[24px] text-black">
+              You entered the class at ${entryTime} today.
             </Text>
-            <Text className="text-black text-[14px] leading-[24px]">
-              Password: xyz
-            </Text>
-            <Section className="text-center mt-[32px] mb-[32px]">
-              <Link
-                href="http://localhost:3000"
-                className="bg-[#000000] rounded text-white text-[12px] font-semibold no-underline text-center border border-solid py-4 px-6"
-              >
-                Login
-              </Link>
-            </Section>
-            <Text className="text-black text-[14px] leading-[24px]">
-              or copy and paste this URL into your browser:{" "}
-              http://localhost:3000
-            </Text>
-            <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
-            <Text className="text-black text-[14px] leading-[24px]">
+            <Hr className="mx-0 my-[26px] w-full border border-solid border-[#eaeaea]" />
+            <Text className="text-[14px] leading-[24px] text-black">
               For any queries contact (
               <Link
                 href={`mailto:ssanket16.patil@gmail.com`}
@@ -72,7 +58,7 @@ const AttendanceRecordEmail = ({
         </Body>
       </Tailwind>
     </Html>
-  );
-};
+  )
+}
 
-export default AttendanceRecordEmail;
+export default AttendanceRecordEmail
