@@ -72,6 +72,7 @@ const SignIn = () => {
           ? `${process.env.NEXT_PUBLIC_URL}/student/dashboard`
           : `${process.env.NEXT_PUBLIC_URL}/teacher/dashboard`,
     });
+    localStorage.setItem("role", values.role);
   };
 
   return (

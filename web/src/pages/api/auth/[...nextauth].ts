@@ -69,11 +69,13 @@ const authOptions: NextAuthOptions = {
   },
   callbacks: {
     session: ({ session, token }) => {
+      console.log(token);
       return {
         ...session,
         user: {
           ...session.user,
           id: token.id,
+          role: session.user.role,
         },
       };
     },
@@ -87,6 +89,7 @@ const authOptions: NextAuthOptions = {
       return token;
     },
   },
+  cookies: {},
 };
 
 export default NextAuth(authOptions);

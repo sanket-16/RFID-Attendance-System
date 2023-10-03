@@ -26,6 +26,7 @@ import { useMutation } from "@tanstack/react-query";
 import { createNewUser } from "@/lib/api";
 import { useToast } from "@/components/ui/use-toast";
 import { CheckCheck } from "lucide-react";
+import Layout from "@/components/teacher/Layout";
 
 const formSchema = z
   .object({
@@ -53,11 +54,9 @@ const SignUp = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      password: "",
       firstName: "",
       middleName: "",
       lastName: "",
-      confirmPassword: "",
     },
   });
 
@@ -78,23 +77,17 @@ const SignUp = () => {
     },
   });
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const {
-      email,
-      firstName,
-      middleName,
-      lastName,
-      password: initialPass,
-    } = values;
-    const password = await hash(initialPass, 5);
+    const { email, firstName, middleName, lastName } = values;
+
     console.log(values);
-    mutate.mutateAsync({ email, firstName, middleName, lastName, password });
+    mutate.mutateAsync({ email, firstName, middleName, lastName });
   };
 
   return (
-    <div className="w-full flex items-center justify-center min-h-[60vh]">
-      <Card className="md:w-3/5">
+    <Layout>
+      <>
         <CardHeader>
-          <CardTitle>Sign Up</CardTitle>
+          <CardTitle>Create New Student Account</CardTitle>
           <CardDescription>Create a new account.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -157,53 +150,12 @@ const SignUp = () => {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="my very secret password"
-                        type={checked ? "text" : "password"}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="my very secret password"
-                        type={checked ? "text" : "password"}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="flex gap-2 text-muted-foreground items-center">
-                <Checkbox
-                  checked={checked}
-                  onCheckedChange={() => setChecked((val) => !val)}
-                />
-                <Label>Show password</Label>
-              </div>
               <Button type="submit">Submit</Button>
             </form>
           </Form>
         </CardContent>
-      </Card>
-    </div>
+      </>
+    </Layout>
   );
 };
 

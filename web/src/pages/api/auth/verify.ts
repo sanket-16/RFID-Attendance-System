@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = {
-  role: string;
+  role: string | undefined;
 };
 
 export default async function handler(
@@ -13,14 +13,21 @@ export default async function handler(
   console.log("hit");
   const { id } = await JSON.parse(req.body);
   const prisma = new PrismaClient();
-  const user = prisma.student.findUnique({
+  const student = await prisma.student.findUnique({
     where: {
       id: id,
     },
   });
-  if (!user) {
+  const teacher = await prisma.teacher.findUnique({
+    where: {
+      id: id,
+    },
+  });
+  if (teacher) {
     res.status(200).json({ role: "Teacher" });
   }
-
-  res.status(200).json({ role: "Student" });
+  if (student) {
+    res.status(200).json({ role: "Student" });
+  }
+  res.status(401).json({ role: undefined });
 }

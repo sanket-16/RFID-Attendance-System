@@ -2,22 +2,21 @@ export const createNewUser = async ({
   firstName,
   middleName,
   lastName,
-  password,
+
   email,
 }: {
   firstName: string;
   middleName: string;
   lastName: string;
-  password: string;
   email: string;
 }) => {
   const res = await fetch("/api/auth/register", {
     method: "POST",
+
     body: JSON.stringify({
       firstName,
       middleName,
       lastName,
-      password,
       email,
     }),
   });
@@ -27,7 +26,7 @@ export const createNewUser = async ({
 };
 
 type VerifyUserResponse = {
-  role: "Student" | "Teacher";
+  role: "Student" | "Teacher" | undefined;
 };
 export const verifyUser = async ({
   id,
@@ -41,6 +40,6 @@ export const verifyUser = async ({
     }),
   });
   const json = await res.json();
-  console.log(json);
+  console.log("here");
   return json;
 };

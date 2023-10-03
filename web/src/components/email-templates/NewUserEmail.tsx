@@ -17,12 +17,14 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-const VercelInviteUserEmail = ({
+const NewUserEmail = ({
   email,
   name,
+  password,
 }: {
   email: string;
   name: string;
+  password: string;
 }) => {
   const previewText = `${name} , welcome to rfid attendance system...`;
 
@@ -43,7 +45,7 @@ const VercelInviteUserEmail = ({
               Email: {email}
             </Text>
             <Text className="text-black text-[14px] leading-[24px]">
-              Password: xyz
+              Password: {password}
             </Text>
             <Section className="text-center mt-[32px] mb-[32px]">
               <Link
@@ -55,7 +57,7 @@ const VercelInviteUserEmail = ({
             </Section>
             <Text className="text-black text-[14px] leading-[24px]">
               or copy and paste this URL into your browser:{" "}
-              http://localhost:3000
+              {`${process.env.NEXT_PUBLIC_URL}/auth/sign-in`}
             </Text>
             <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
             <Text className="text-black text-[14px] leading-[24px]">
@@ -75,4 +77,4 @@ const VercelInviteUserEmail = ({
   );
 };
 
-export default VercelInviteUserEmail;
+export default NewUserEmail;
