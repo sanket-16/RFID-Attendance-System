@@ -50,7 +50,6 @@ const SignIn = () => {
   const { error } = router.query
 
   const [checked, setChecked] = useState<boolean>(false)
-  const { toast } = useToast()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

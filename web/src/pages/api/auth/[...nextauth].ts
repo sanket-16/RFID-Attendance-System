@@ -1,12 +1,12 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
-import { compare } from "bcrypt";
+import NextAuth, { NextAuthOptions } from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
+import { PrismaAdapter } from "@auth/prisma-adapter"
+import { PrismaClient } from "@prisma/client"
+import { compare } from "bcrypt"
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   secret: process.env.NEXT_AUTH_SECRET,
   session: {
     strategy: "jwt",
@@ -44,21 +44,21 @@ const authOptions: NextAuthOptions = {
                 where: {
                   email: credentials?.email,
                 },
-              });
+              })
         if (!dbUser) {
-          throw new Error("Invalid Credentails");
+          throw new Error("Invalid Credentails")
         }
         if (
           await compare(String(credentials?.password), String(dbUser?.password))
         ) {
-          throw new Error("Invalid Credentails");
+          throw new Error("Invalid Credentails")
         }
         return {
           id: dbUser.id,
           name: dbUser.firstName + " " + dbUser.lastName,
           email: dbUser.email,
           role: credentials?.role,
-        };
+        }
       },
     }),
   ],
@@ -69,7 +69,7 @@ const authOptions: NextAuthOptions = {
   },
   callbacks: {
     session: ({ session, token }) => {
-      console.log(token);
+      console.log(token)
       return {
         ...session,
         user: {
@@ -77,19 +77,19 @@ const authOptions: NextAuthOptions = {
           id: token.id,
           role: session.user.role,
         },
-      };
+      }
     },
     jwt: ({ token, user }) => {
       if (user) {
         return {
           ...token,
           id: user.id,
-        };
+        }
       }
-      return token;
+      return token
     },
   },
   cookies: {},
-};
+}
 
-export default NextAuth(authOptions);
+export default NextAuth(authOptions)

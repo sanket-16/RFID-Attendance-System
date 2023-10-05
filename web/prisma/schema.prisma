@@ -35,6 +35,7 @@ model Student {
   updatedAt         DateTime           @updatedAt
   attendanceRecords AttendanceRecord[]
   classes           Class[]
+  UID               String?
 }
 
 model Teacher {
@@ -91,5 +92,4 @@ model Class {
   students  Student[]
   teacherId String
   startTime DateTime
-  endTime   DateTime
 }

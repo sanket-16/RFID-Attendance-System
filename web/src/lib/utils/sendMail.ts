@@ -1,5 +1,5 @@
-import { render } from "@react-email/render";
-import nodemailer from "nodemailer";
+import { render } from "@react-email/render"
+import nodemailer from "nodemailer"
 
 const sendMail = () => {
   const transporter = nodemailer.createTransport({
@@ -10,11 +10,11 @@ const sendMail = () => {
       user: process.env.EMAIL,
       pass: process.env.PASSWORD,
     },
-  });
+  })
   return {
     transporter,
     render,
-  };
-};
+  }
+}
 
-export default sendMail;
+export default sendMail

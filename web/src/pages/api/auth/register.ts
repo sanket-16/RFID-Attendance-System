@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import { PrismaClient } from "@prisma/client"
 import NewUserEmail from "@/components/email-templates/NewUserEmail"
-import { sendMail } from "@/lib/utils"
+import sendMail from "@/lib/utils/sendMail"
 
 export default async function handler(
   req: NextApiRequest,

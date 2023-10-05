@@ -19,24 +19,15 @@ import { useToast } from "@/components/ui/use-toast"
 import Layout from "@/components/teacher/Layout"
 import { createNewUser } from "@/lib/api"
 
-const formSchema = z
-  .object({
-    firstName: z.string().min(2, { message: "This field has to be filled." }),
-    middleName: z.string(),
-    lastName: z.string().min(2, { message: "This field has to be filled." }),
-    email: z
-      .string()
-      .min(2, { message: "This field has to be filled." })
-      .email("This is not a valid email."),
-    password: z.string().min(2, { message: "Please enter a valid password" }),
-    confirmPassword: z
-      .string()
-      .min(2, { message: "Please enter a valid password" }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  })
+const formSchema = z.object({
+  firstName: z.string().min(2, { message: "This field has to be filled." }),
+  middleName: z.string(),
+  lastName: z.string().min(2, { message: "This field has to be filled." }),
+  email: z
+    .string()
+    .min(2, { message: "This field has to be filled." })
+    .email("This is not a valid email."),
+})
 
 const SignUp = () => {
   const [checked, setChecked] = useState<boolean>(false)

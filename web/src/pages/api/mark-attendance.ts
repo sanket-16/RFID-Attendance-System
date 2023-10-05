@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next"
 import { PrismaClient } from "@prisma/client"
-import { sendMail } from "@/lib/utils"
+import sendMail from "@/lib/utils/sendMail"
 import AttendanceRecordEmail from "@/components/email-templates/AttendanceRecordEmail"
 
 type Data = {
@@ -12,24 +12,17 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { userId } = await JSON.parse(req.body)
+  const { uid } = await JSON.parse(req.body)
   const prisma = new PrismaClient()
   const { render, transporter } = sendMail()
 
-  const user = await prisma.student.findUnique({
+  const user = await prisma.student.findFirst({
     where: {
-      id: userId,
-    },
-    select: {
-      email: true,
-      attendanceRecords: true,
-      firstName: true,
-      middleName: true,
-      lastName: true,
+      UID: uid,
     },
   })
 
-  if (!user) {
+  if (!user || user === null) {
     res.status(401).json({ message: "Failed to find user details." })
   }
 
@@ -52,7 +45,7 @@ export default async function handler(
     data: {
       student: {
         connect: {
-          id: userId,
+          id: user?.id,
         },
       },
       entryTime: Date.now().toLocaleString(),
