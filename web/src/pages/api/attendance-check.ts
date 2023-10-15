@@ -1,8 +1,8 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import sendMail from "@/lib/utils/sendMail";
-import AttendanceRecordEmail from "@/components/email-templates/AttendanceRecordEmail";
 import prisma from "@/lib/utils/prisma";
+import { Class } from "@prisma/client";
+import AttendanceReportEmail from "@/components/email-templates/AttendanceReport";
 
 type Data = {
   message: string;
@@ -10,7 +10,7 @@ type Data = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse<Data>
 ) {
   try {
     if (req.method === "GET") {
@@ -19,68 +19,114 @@ export default async function handler(
       const tommorow = new Date();
       today.setHours(0, 0, 0, 0);
       tommorow.setHours(23, 59, 59, 999);
-      const todaysClasses = await prisma.class.findMany({
-        include: {
-          students: {
-            select: {
-              firstName: true,
-              attendanceRecords: {
-                where: {
-                  entryTime: {
-                    gt: today,
-                    lt: tommorow,
-                  },
-                },
+      const { render, transporter } = sendMail();
+      const students = await prisma.student.findMany({
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          middleName: true,
+          lastName: true,
+          classes: {
+            where: {
+              startTime: {
+                gt: today,
+                lt: tommorow,
               },
             },
           },
-        },
-        where: {
-          startTime: {
-            gt: today,
-            lt: tommorow,
-          },
-          students: {
-            some: {
-              attendanceRecords: {
-                some: {
-                  entryTime: {
-                    lte: tommorow,
-                  },
-                  exitTime: {
-                    gte: today,
-                  },
-                },
+          attendanceRecords: {
+            where: {
+              entryTime: {
+                gt: today,
               },
             },
           },
         },
       });
+      console.log(students);
+      students.forEach(async (student) => {
+        console.warn(student.email);
+        let absentClasses: Class[] = [];
+        let presentClasses: Class[] = [];
 
-      const filteredClasses = todaysClasses.filter((classItem) => {
-        const { students } = classItem;
-        if (students) {
-          for (const student of students) {
-            if (student.attendanceRecords) {
-              for (const record of student.attendanceRecords) {
-                if (record.exitTime === null) {
-                  return false;
-                }
-                if (
-                  record.entryTime <= classItem.startTime &&
-                  record.exitTime >= classItem.startTime
-                ) {
-                  return true;
-                }
-              }
-            }
-          }
+        if (
+          !student.attendanceRecords ||
+          student.attendanceRecords.length === 0 ||
+          student.attendanceRecords[0].exitTime === null
+        ) {
+          absentClasses = [...student.classes];
+          const emailHtml = render(
+            AttendanceReportEmail({
+              name:
+                student?.firstName +
+                " " +
+                student?.middleName +
+                " " +
+                student?.lastName,
+              absentClasses: absentClasses.map(
+                (classDetails) =>
+                  classDetails.title + " " + classDetails.subject
+              ),
+              presentClasses: presentClasses.map(
+                (classDetails) =>
+                  classDetails.title + " " + classDetails.subject
+              ),
+            })
+          );
+
+          const options = {
+            from: process.env.EMAIL,
+            to: String(student?.email),
+            subject: `Daily Attendance Report`,
+            html: emailHtml,
+          };
+          const something = await transporter.sendMail(options);
+
+          console.log(absentClasses);
+
+          return;
         }
-        return false;
+        const exitTime: Date = student.attendanceRecords[0].exitTime;
+        student.classes.map((classRecord) => {
+          if (
+            classRecord.startTime > student.attendanceRecords[0].entryTime &&
+            classRecord.startTime < exitTime
+          ) {
+            presentClasses.push(classRecord);
+          } else {
+            absentClasses.push(classRecord);
+          }
+        });
+        const emailHtml = render(
+          AttendanceReportEmail({
+            name:
+              student?.firstName +
+              " " +
+              student?.middleName +
+              " " +
+              student?.lastName,
+            absentClasses: absentClasses.map(
+              (classDetails) =>
+                classDetails.title + " - " + classDetails.subject
+            ),
+            presentClasses: presentClasses.map(
+              (classDetails) =>
+                classDetails.title + " - " + classDetails.subject
+            ),
+          })
+        );
+
+        const options = {
+          from: process.env.EMAIL,
+          to: String(student?.email),
+          subject: `Daily Attendance Report`,
+          html: emailHtml,
+        };
+        const something = await transporter.sendMail(options);
       });
 
-      console.log(filteredClasses);
-      res.status(200).json(filteredClasses);
+      res.status(200).json({ message: "Successfully sent mail." });
     }
   } catch (error) {
     res.status(400).json({ message: "Something went wrong." });

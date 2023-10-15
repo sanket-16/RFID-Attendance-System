@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import sendMail from "@/lib/utils/sendMail";
 import AttendanceRecordEmail from "@/components/email-templates/AttendanceRecordEmail";
