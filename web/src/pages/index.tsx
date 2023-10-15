@@ -1,17 +1,17 @@
-import { useRouter } from "next/router"
-import { Inter } from "next/font/google"
-import { useStatus } from "@/lib/hooks/useStatus"
+import { useRouter } from "next/router";
+import { Inter } from "next/font/google";
+import { useStatus } from "@/lib/hooks/useStatus";
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const router = useRouter()
-  const { role } = useStatus()
+  const router = useRouter();
+  const { role } = useStatus();
   if (role === "Student") {
-    router.push("/student/dashboard")
+    router.push("/student/dashboard");
   }
   if (role === "Teacher") {
-    router.push("/teacher/dashboard")
+    router.push("/teacher/dashboard");
   }
   return (
     <main className={`py-6 ${inter.className} min-w-max`}>
@@ -20,5 +20,5 @@ export default function Home() {
         <div>hi</div>
       </div>
     </main>
-  )
+  );
 }

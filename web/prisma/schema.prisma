@@ -53,10 +53,10 @@ model Teacher {
 }
 
 model AttendanceRecord {
-  id        String   @id @default(uuid())
-  student   Student  @relation(fields: [studentId], references: [id])
-  entryTime DateTime @default(now())
-  exitTime  DateTime @updatedAt
+  id        String    @id @default(uuid())
+  student   Student   @relation(fields: [studentId], references: [id])
+  entryTime DateTime  @default(now())
+  exitTime  DateTime?
   studentId String
 }
 

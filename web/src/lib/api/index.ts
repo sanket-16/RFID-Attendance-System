@@ -5,6 +5,9 @@ import getClasses from "./class/getAll"
 import getClass from "./class/get"
 import getFilteredStudents from "./student/getFiltered"
 import addStudent from "./class/addStudent"
+import getStudentClasses from "./student/getClasses"
+import getOlderClasses from "./student/getOlderClasses"
+import getAttendanceRecords from "./student/getAttendanceRecords"
 export {
   createNewUser,
   verifyUser,
@@ -13,4 +16,7 @@ export {
   getClass,
   getFilteredStudents,
   addStudent,
+  getStudentClasses,
+  getOlderClasses,
+  getAttendanceRecords,
 }

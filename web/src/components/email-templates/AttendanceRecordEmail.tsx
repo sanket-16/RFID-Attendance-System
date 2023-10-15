@@ -14,11 +14,11 @@ import {
 const AttendanceRecordEmail = ({
   email,
   name,
-  entryTime,
+  message,
 }: {
   email: string
   name: string
-  entryTime: string
+  message: string
 }) => {
   const previewText = `${name} ,your attendance has been marked.`
 
@@ -36,7 +36,7 @@ const AttendanceRecordEmail = ({
               <strong>Hi {name}</strong>,
             </Text>
             <Text className="text-[14px] leading-[24px] text-black">
-              You entered the class at ${entryTime} today.
+              {message}
             </Text>
             <Hr className="mx-0 my-[26px] w-full border border-solid border-[#eaeaea]" />
             <Text className="text-[14px] leading-[24px] text-black">

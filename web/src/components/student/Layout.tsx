@@ -9,7 +9,7 @@ export default function Layout({
   children: ReactElement | ReactNode
 }) {
   const router = useRouter()
-  const { role } = useStatus()
+  const { role, status } = useStatus()
   if (role === "Teacher") {
     router.push("/teacher/dashboard")
   }
@@ -17,7 +17,7 @@ export default function Layout({
     <main className="w-full">
       <div className="grid grid-cols-12 gap-4">
         <Sidebar />
-        <div className="col-span-9 border p-4 ">{children}</div>
+        <div className="col-span-9 rounded-md border p-4 ">{children}</div>
       </div>
     </main>
   )

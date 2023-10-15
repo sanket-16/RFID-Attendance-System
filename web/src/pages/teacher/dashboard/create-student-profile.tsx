@@ -1,11 +1,11 @@
-import { useState } from "react"
-import { useMutation } from "@tanstack/react-query"
-import * as z from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { CheckCheck } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { CardContent, CardDescription } from "@/components/ui/card"
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { CheckCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CardContent, CardDescription } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -13,11 +13,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { useToast } from "@/components/ui/use-toast"
-import Layout from "@/components/teacher/Layout"
-import { createNewUser } from "@/lib/api"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
+import Layout from "@/components/teacher/Layout";
+import { createNewUser } from "@/lib/api";
 
 const formSchema = z.object({
   firstName: z.string().min(2, { message: "This field has to be filled." }),
@@ -27,11 +27,12 @@ const formSchema = z.object({
     .string()
     .min(2, { message: "This field has to be filled." })
     .email("This is not a valid email."),
-})
+  uid: z.string().min(2, { message: "This field has to be filled." }),
+});
 
 const SignUp = () => {
-  const [checked, setChecked] = useState<boolean>(false)
-  const { toast } = useToast()
+  const [checked, setChecked] = useState<boolean>(false);
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,14 +40,15 @@ const SignUp = () => {
       firstName: "",
       middleName: "",
       lastName: "",
+      uid: "",
     },
-  })
+  });
 
   const mutate = useMutation({
     mutationKey: ["createUser"],
     mutationFn: createNewUser,
     onSuccess: (data) => {
-      form.reset()
+      form.reset();
       toast({
         variant: "default",
         action: (
@@ -55,15 +57,15 @@ const SignUp = () => {
             <span>Successfully created new user.</span>
           </div>
         ),
-      })
+      });
     },
-  })
+  });
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const { email, firstName, middleName, lastName } = values
+    const { email, firstName, middleName, lastName, uid } = values;
 
-    console.log(values)
-    mutate.mutateAsync({ email, firstName, middleName, lastName })
-  }
+    console.log(values);
+    mutate.mutateAsync({ email, firstName, middleName, lastName, uid });
+  };
 
   return (
     <Layout>
@@ -134,13 +136,26 @@ const SignUp = () => {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="uid"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>UID</FormLabel>
+                    <FormControl>
+                      <Input placeholder="0X94E39A53" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <Button type="submit">Submit</Button>
             </form>
           </Form>
         </CardContent>
       </>
     </Layout>
-  )
-}
+  );
+};
 
-export default SignUp
+export default SignUp;

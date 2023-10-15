@@ -1,9 +1,9 @@
-import * as z from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Subjects } from "@prisma/client"
-import { useForm } from "react-hook-form"
-import Layout from "@/components/teacher/Layout"
-import { CardContent, CardDescription } from "@/components/ui/card"
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Subjects } from "@prisma/client";
+import { useForm } from "react-hook-form";
+import Layout from "@/components/teacher/Layout";
+import { CardContent, CardDescription } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -11,36 +11,36 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { useMutation } from "@tanstack/react-query"
-import { createNewClass, createNewUser } from "@/lib/api"
-import { useToast } from "@/components/ui/use-toast"
-import { CheckCheck } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/form";
+import { useMutation } from "@tanstack/react-query";
+import { createNewClass, createNewUser } from "@/lib/api";
+import { useToast } from "@/components/ui/use-toast";
+import { CheckCheck } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
 function getEnumKeys<
   T extends string,
   TEnumValue extends string | number,
 >(enumVariable: { [key in T]: TEnumValue }) {
-  return Object.keys(enumVariable) as Array<T>
+  return Object.keys(enumVariable) as Array<T>;
 }
-const subjects = getEnumKeys(Subjects)
+const subjects = getEnumKeys(Subjects);
 const formSchema = z.object({
   title: z.string().min(2, { message: "This field has to be filled." }),
   subject: z.enum(["", ...subjects]),
   startTime: z.string(),
-})
+});
 
 const CreateClass = () => {
-  const { toast } = useToast()
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,13 +48,13 @@ const CreateClass = () => {
       subject: "",
       startTime: "",
     },
-  })
+  });
 
   const mutate = useMutation({
     mutationKey: ["createNewClass"],
     mutationFn: createNewClass,
     onSuccess: (data) => {
-      form.reset()
+      form.reset();
       toast({
         variant: "default",
         action: (
@@ -63,15 +63,15 @@ const CreateClass = () => {
             <span>Successfully created new class.</span>
           </div>
         ),
-      })
+      });
     },
-  })
+  });
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const { title, subject, startTime } = values
-    const date = new Date(startTime)
-    console.log(values)
-    mutate.mutateAsync({ title, subject, startTime: date })
-  }
+    const { title, subject, startTime } = values;
+    const date = new Date(startTime);
+    console.log(values);
+    mutate.mutateAsync({ title, subject, startTime: date });
+  };
 
   return (
     <Layout>
@@ -142,7 +142,7 @@ const CreateClass = () => {
         </Form>
       </CardContent>
     </Layout>
-  )
-}
+  );
+};
 
-export default CreateClass
+export default CreateClass;

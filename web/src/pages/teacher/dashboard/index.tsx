@@ -1,5 +1,5 @@
-import Layout from "@/components/teacher/Layout"
-import { Card, CardContent, CardDescription } from "@/components/ui/card"
+import Layout from "@/components/teacher/Layout";
+import { Card, CardContent, CardDescription } from "@/components/ui/card";
 
 const TeacherDashboard = () => {
   return (
@@ -34,7 +34,7 @@ const TeacherDashboard = () => {
         </CardContent>
       </>
     </Layout>
-  )
-}
+  );
+};
 
-export default TeacherDashboard
+export default TeacherDashboard;

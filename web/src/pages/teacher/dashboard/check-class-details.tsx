@@ -1,10 +1,10 @@
-import Layout from "@/components/teacher/Layout"
+import Layout from "@/components/teacher/Layout";
 import {
   Card,
   CardContent,
   CardDescription,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -21,7 +21,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,45 +29,45 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   addStudent,
   getClass,
   getClasses,
   getFilteredStudents,
-} from "@/lib/api"
-import { Class } from "@prisma/client"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { CheckCheck, MoreVertical, Trash2, X } from "lucide-react"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { useToast } from "@/components/ui/use-toast"
+} from "@/lib/api";
+import { Class } from "@prisma/client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { CheckCheck, MoreVertical, Trash2, X } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/components/ui/use-toast";
 
 const ClassDetails = ({ classDetails }: { classDetails: Class }) => {
-  const { toast } = useToast()
-  const queryClient = useQueryClient()
-  const [open, setOpen] = useState(false)
-  const [hidden, setHidden] = useState(false)
-  const [filter, setFilter] = useState("")
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const [filter, setFilter] = useState("");
   const { data, status } = useQuery({
     queryKey: ["getClass", classDetails],
     queryFn: () => getClass({ id: classDetails.id }),
     enabled: open,
-  })
+  });
   const { data: studentData, status: studentStatus } = useQuery({
     queryKey: ["getFilteredStudents", filter],
     queryFn: () => getFilteredStudents({ filter, classId: classDetails.id }),
     enabled: hidden,
-  })
+  });
   const mutate = useMutation({
     mutationKey: ["addStudent"],
     mutationFn: addStudent,
     onSuccess: (data) => {
-      setFilter("")
-      queryClient.invalidateQueries(["getClass"])
-      queryClient.invalidateQueries(["getFilteredStudents"])
+      setFilter("");
+      queryClient.invalidateQueries(["getClass"]);
+      queryClient.invalidateQueries(["getFilteredStudents"]);
       toast({
         variant: "default",
         action: (
@@ -76,10 +76,10 @@ const ClassDetails = ({ classDetails }: { classDetails: Class }) => {
             <span>Successfully added student.</span>
           </div>
         ),
-      })
+      });
     },
     onError: (error) => {
-      console.log(error)
+      console.log(error);
       toast({
         variant: "default",
         action: (
@@ -88,10 +88,10 @@ const ClassDetails = ({ classDetails }: { classDetails: Class }) => {
             <span>Failed to add student.</span>
           </div>
         ),
-      })
+      });
     },
-  })
-  const date = new Date(classDetails?.startTime)
+  });
+  const date = new Date(classDetails?.startTime);
 
   // if (status === "loading") {
   //   return (
@@ -223,16 +223,16 @@ const ClassDetails = ({ classDetails }: { classDetails: Class }) => {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
 const CheckClassDetails = () => {
-  const date = new Date()
+  const date = new Date();
   const { data, status } = useQuery({
     queryKey: ["getAllClasses"],
     queryFn: () => getClasses(),
     refetchOnWindowFocus: false,
-  })
+  });
 
   if (status === "error") {
     return (
@@ -244,7 +244,7 @@ const CheckClassDetails = () => {
           <CardContent>Error Occured</CardContent>
         </CardContent>
       </Layout>
-    )
+    );
   }
   if (status === "loading") {
     return (
@@ -256,7 +256,7 @@ const CheckClassDetails = () => {
           <CardContent>Loading</CardContent>
         </CardContent>
       </Layout>
-    )
+    );
   }
 
   return (
@@ -277,7 +277,7 @@ const CheckClassDetails = () => {
                     classDetails={classDetails}
                     key={classDetails.id}
                   />
-                )
+                );
               })}
             <p className="md:col-span-3">Older Classes</p>
             {data?.classes
@@ -291,7 +291,7 @@ const CheckClassDetails = () => {
                     classDetails={classDetails}
                     key={classDetails.id}
                   />
-                )
+                );
               })}
           </>
         ) : (
@@ -299,7 +299,7 @@ const CheckClassDetails = () => {
         )}
       </CardContent>
     </Layout>
-  )
-}
+  );
+};
 
-export default CheckClassDetails
+export default CheckClassDetails;

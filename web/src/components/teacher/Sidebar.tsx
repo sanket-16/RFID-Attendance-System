@@ -24,7 +24,7 @@ const tabs = [
 const Sidebar = () => {
   const router = useRouter()
   return (
-    <Card className="col-span-3 h-full border">
+    <Card className="col-span-3 h-full border bg-background">
       <CardHeader>
         <CardDescription>Teacher Dashboard</CardDescription>
       </CardHeader>

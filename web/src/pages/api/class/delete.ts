@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next"
 import { getServerSession } from "next-auth"
 import { Class, PrismaClient, Student } from "@prisma/client"
 import { authOptions } from "../auth/[...nextauth]"
+import prisma from "@/lib/utils/prisma"
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,7 +11,6 @@ export default async function handler(
   const { id } = await JSON.parse(req.body)
   if (req.method === "POST") {
     const session = await getServerSession(req, res, authOptions)
-    const prisma = new PrismaClient()
     console.log(session)
     if (!session) {
       res.status(401).json({ message: "Unauthorized" })

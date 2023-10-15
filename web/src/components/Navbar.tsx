@@ -25,11 +25,11 @@ const Menu = ({ data }: { data: Session }) => {
             useGravatar={false}
             size={24}
             primarySource={data.user?.image}
-            color="#000000"
-            background="#f1f1f1"
-            fontSize={14}
+            color="#ffffff"
+            background="hsl(217.2 ,91.2% ,59.8%)"
+            fontSize={13}
             fontWeight={400}
-            offsetY={14}
+            offsetY={13}
             initials={`${data.user?.name?.split(
               " "
             )[0][0]}${data.user?.name?.split(" ")[1][0]}`}

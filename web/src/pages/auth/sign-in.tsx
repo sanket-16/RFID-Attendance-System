@@ -1,12 +1,12 @@
-import { useState } from "react"
-import { useRouter } from "next/router"
-import { signIn } from "next-auth/react"
-import { X } from "lucide-react"
-import * as z from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { hash } from "bcryptjs-react"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { signIn } from "next-auth/react";
+import { X } from "lucide-react";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { hash } from "bcryptjs-react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -14,8 +14,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
+} from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -24,17 +24,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useToast } from "@/components/ui/use-toast"
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   email: z
@@ -43,22 +43,22 @@ const formSchema = z.object({
     .email("This is not a valid email."),
   password: z.string().min(2, { message: "Please enter a valid password" }),
   role: z.enum(["Teacher", "Student"]),
-})
+});
 
 const SignIn = () => {
-  const router = useRouter()
-  const { error } = router.query
+  const router = useRouter();
+  const { error } = router.query;
 
-  const [checked, setChecked] = useState<boolean>(false)
+  const [checked, setChecked] = useState<boolean>(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
     },
-  })
+  });
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const password = await hash(values.password, 5)
+    const password = await hash(values.password, 5);
 
     const res = await signIn("credentials", {
       email: values.email,
@@ -69,9 +69,9 @@ const SignIn = () => {
         values.role === "Student"
           ? `${process.env.NEXT_PUBLIC_URL}/student/dashboard`
           : `${process.env.NEXT_PUBLIC_URL}/teacher/dashboard`,
-    })
-    localStorage.setItem("role", values.role)
-  }
+    });
+    localStorage.setItem("role", values.role);
+  };
 
   return (
     <div className="flex min-h-[60vh] w-full flex-col items-center justify-center gap-4">
@@ -159,7 +159,7 @@ const SignIn = () => {
         </Card>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default SignIn
+export default SignIn;

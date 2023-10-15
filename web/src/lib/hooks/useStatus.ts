@@ -35,5 +35,5 @@ export const useStatus = () => {
     }
   }, [status])
 
-  return { role }
+  return { role, status }
 }

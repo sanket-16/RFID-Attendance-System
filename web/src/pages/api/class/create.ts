@@ -5,6 +5,7 @@ import { PrismaClient, Subjects } from "@prisma/client"
 import AttendanceRecordEmail from "@/components/email-templates/AttendanceRecordEmail"
 import { getServerSession } from "next-auth"
 import { authOptions } from "../auth/[...nextauth]"
+import prisma from "@/lib/utils/prisma"
 type Data = {
   message: string
 }
@@ -16,8 +17,6 @@ export default async function handler(
   const { title, startTime, subject } = await JSON.parse(req.body)
   console.log(title, subject, startTime)
   const session = await getServerSession(req, res, authOptions)
-  const prisma = new PrismaClient()
-  // const { render, transporter } = sendMail()
 
   const newClass = await prisma.class.create({
     data: {

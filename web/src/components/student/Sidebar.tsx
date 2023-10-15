@@ -8,19 +8,19 @@ const tabs = [
     link: "/",
   },
   {
-    name: "Check Class Details",
-    link: "/check-class-details",
+    name: "Check Attendance",
+    link: "/check-attendance",
   },
   {
-    name: "Check Attendance",
-    link: "/create-attendance",
+    name: "Older Classes",
+    link: "/older-classes",
   },
 ]
 
 const Sidebar = () => {
   const router = useRouter()
   return (
-    <Card className="col-span-3 h-full border p-4">
+    <Card className="col-span-3 h-full border bg-background p-4">
       <CardHeader>
         <CardDescription>Student Dashboard</CardDescription>
       </CardHeader>

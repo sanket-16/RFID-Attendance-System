@@ -1,32 +1,32 @@
-import type { NextApiRequest, NextApiResponse } from "next"
-import { getServerSession } from "next-auth"
-import { Class, PrismaClient, Student } from "@prisma/client"
-import { authOptions } from "../auth/[...nextauth]"
+import type { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth";
+import { Class, PrismaClient, Student } from "@prisma/client";
+import { authOptions } from "../auth/[...nextauth]";
+import prisma from "@/lib/utils/prisma";
 
 type Students = {
   students: {
-    id: string
-    firstName: string
-    lastName: string
-    middleName: string | null
-    email: string | null
-  }[]
-}
+    id: string;
+    firstName: string;
+    lastName: string;
+    middleName: string | null;
+    email: string | null;
+  }[];
+};
 type Message = {
-  message: string
-}
+  message: string;
+};
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Students | Message>
 ) {
   if (req.method === "POST") {
-    const { filter, classId } = await JSON.parse(req.body)
-    console.log(filter)
-    const session = await getServerSession(req, res, authOptions)
-    const prisma = new PrismaClient()
+    const { filter, classId } = await JSON.parse(req.body);
+    console.log(filter);
+    const session = await getServerSession(req, res, authOptions);
     if (!session) {
-      res.status(401).json({ message: "Unauthorized" })
+      res.status(401).json({ message: "Unauthorized" });
     }
     const students = await prisma.student.findMany({
       select: {
@@ -70,8 +70,8 @@ export default async function handler(
           },
         ],
       },
-    })
+    });
 
-    res.status(200).json({ students })
+    res.status(200).json({ students });
   }
 }
