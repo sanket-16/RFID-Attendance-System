@@ -1,6 +1,6 @@
-import Link from "next/link"
-import { useRouter } from "next/router"
-import { Card, CardContent, CardDescription, CardHeader } from "../ui/card"
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
 
 const tabs = [
   {
@@ -19,10 +19,14 @@ const tabs = [
     name: "Create Class",
     link: "/create-class",
   },
-]
+  {
+    name: "Student Records",
+    link: "/student-records",
+  },
+];
 
 const Sidebar = () => {
-  const router = useRouter()
+  const router = useRouter();
   return (
     <Card className="col-span-3 h-full border bg-background">
       <CardHeader>
@@ -42,7 +46,7 @@ const Sidebar = () => {
         ))}
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;

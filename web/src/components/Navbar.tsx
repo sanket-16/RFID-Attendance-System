@@ -1,11 +1,11 @@
-import Link from "next/link"
-import { Session } from "next-auth"
-import { signIn, signOut, useSession } from "next-auth/react"
+import Link from "next/link";
+import { Session } from "next-auth";
+import { signIn, signOut, useSession } from "next-auth/react";
 //@ts-ignore
-import { AvatarComponent } from "avatar-initials"
-import ThemeToggle from "./ThemeToggle"
-import { Button } from "./ui/button"
-import { Skeleton } from "./ui/skeleton"
+import { AvatarComponent } from "avatar-initials";
+import ThemeToggle from "./ThemeToggle";
+import { Button } from "./ui/button";
+import { Skeleton } from "./ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +13,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu"
+} from "./ui/dropdown-menu";
 
 const Menu = ({ data }: { data: Session }) => {
   return (
@@ -41,18 +41,23 @@ const Menu = ({ data }: { data: Session }) => {
         <DropdownMenuLabel>{data.user?.email}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuItem>Team</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
+        <DropdownMenuItem
+          className="text-red-500"
+          onClick={() => {
+            localStorage.clear();
+            signOut();
+          }}
+        >
+          Logout
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
-}
+  );
+};
 
 const Navbar = () => {
-  const { data, status } = useSession()
-  console.log(data)
+  const { data, status } = useSession();
+  console.log(data);
   return (
     <nav className="flex min-w-full items-center justify-between py-6">
       <Link href="/" className="text-xl font-bold">
@@ -67,7 +72,7 @@ const Navbar = () => {
         <ThemeToggle />
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

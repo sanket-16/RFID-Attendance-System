@@ -45,7 +45,25 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 
-const ClassDetails = ({ classDetails }: { classDetails: Class }) => {
+const getDateDetails = (recordDate: Date) => {
+  const date = new Date(recordDate);
+  return {
+    year: date.getFullYear(),
+    month: date.getMonth(),
+    date: date.getDate(),
+    hour: date.getHours(),
+    minutes: date.getMinutes(),
+    seconds: date.getSeconds(),
+  };
+};
+
+const ClassDetails = ({
+  classDetails,
+  older,
+}: {
+  classDetails: Class;
+  older: boolean;
+}) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -93,35 +111,20 @@ const ClassDetails = ({ classDetails }: { classDetails: Class }) => {
   });
   const date = new Date(classDetails?.startTime);
 
-  // if (status === "loading") {
-  //   return (
-  //     <Dialog open={open} onOpenChange={setOpen}>
-  //       <DialogContent>Loading</DialogContent>
-  //     </Dialog>
-  //   )
-  // }
-  // if (status === "error") {
-  //   return (
-  //     <Dialog open={open} onOpenChange={setOpen}>
-  //       <DialogContent>Error</DialogContent>
-  //     </Dialog>
-  //   )
-  // }
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} modal={true}>
       <DialogTrigger>
-        <Card className="p-4 text-start hover:cursor-pointer hover:bg-secondary">
+        <Card className="w-full p-4 text-start hover:cursor-pointer hover:bg-secondary">
           <CardTitle className="text-lg font-bold">
             {classDetails.title}
           </CardTitle>
           <CardContent className="flex flex-col gap-2 py-4 text-sm text-muted-foreground">
             <p>Subject : {classDetails.subject}</p>
-            <p>Teacher : {}</p>
             <p>Time : {date.toLocaleString()}</p>
           </CardContent>
         </Card>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-screen overflow-y-scroll lg:max-w-fit">
         <DialogHeader>
           <DialogTitle>{classDetails.title}</DialogTitle>
           <DialogDescription>{classDetails.subject}</DialogDescription>
@@ -139,35 +142,82 @@ const ClassDetails = ({ classDetails }: { classDetails: Class }) => {
                   <TableHead className="w-[100px]">Sr No</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
+                  {older && <TableHead>Attendance</TableHead>}
                   <TableHead>Options</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data?.classDetails.students.map((student, index) => (
-                  <TableRow key={student.id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>
-                      {student.firstName + student.lastName}
-                    </TableCell>
-                    <TableCell>{student.email}</TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger>
-                          <MoreVertical />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuLabel className="font-sm text-bold text-muted-foreground">
-                            Options
-                          </DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="flex items-center gap-2 text-red-500">
-                            <Trash2 size={14} /> Remove
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {data?.classDetails.students.map((student, index) => {
+                  const { date, month, year } = getDateDetails(
+                    classDetails.startTime
+                  );
+
+                  const filteredRecord = student?.attendanceRecords?.filter(
+                    (record) => {
+                      const {
+                        date: recordDate,
+                        month: recordMonth,
+                        year: recordYear,
+                      } = getDateDetails(record.entryTime);
+                      if (
+                        recordDate === date &&
+                        recordMonth === month &&
+                        recordYear === year
+                      ) {
+                        return record;
+                      }
+                    }
+                  );
+                  console.log(filteredRecord);
+                  return (
+                    <TableRow key={student.id}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>
+                        {student.firstName + student.lastName}
+                      </TableCell>
+                      <TableCell>{student.email}</TableCell>
+                      {older && (
+                        <TableCell className="text-center font-bold">
+                          {(filteredRecord === undefined ||
+                            !filteredRecord ||
+                            filteredRecord.length === 0) && (
+                            <span className="text-red-500">A</span>
+                          )}
+                          {filteredRecord.length !== 0 &&
+                            filteredRecord[0].entryTime <
+                              classDetails.startTime &&
+                            filteredRecord[0].exitTime >
+                              classDetails.startTime && (
+                              <span className="text-green-500">P</span>
+                            )}
+                          {filteredRecord.length !== 0 &&
+                            (filteredRecord[0].entryTime >
+                              classDetails.startTime ||
+                              filteredRecord[0].exitTime <
+                                classDetails.startTime) && (
+                              <span className="text-red-500">A</span>
+                            )}
+                        </TableCell>
+                      )}
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger>
+                            <MoreVertical />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuLabel className="font-sm text-bold text-muted-foreground">
+                              Options
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="flex items-center gap-2 text-red-500">
+                              <Trash2 size={14} /> Remove
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           )}
@@ -262,37 +312,45 @@ const CheckClassDetails = () => {
   return (
     <Layout>
       <CardDescription>TeacherDashboard / Check Class Details</CardDescription>
-      <CardContent className="grid gap-4 p-4 md:grid-cols-3">
+      <CardContent className="grid gap-4  p-4 md:grid-cols-3">
         {data !== undefined ? (
           <>
             <p className="md:col-span-3">Today&#39;s Classes</p>
-            {data?.classes
-              .filter(
-                (classDetails) =>
-                  new Date(classDetails.startTime).getDate() === date.getDate()
-              )
-              .map((classDetails) => {
-                return (
-                  <ClassDetails
-                    classDetails={classDetails}
-                    key={classDetails.id}
-                  />
-                );
-              })}
+            {!data || data === undefined || data?.classes?.length === 0
+              ? "No classes yet"
+              : data?.classes
+                  ?.filter(
+                    (classDetails) =>
+                      new Date(classDetails.startTime).getDate() ===
+                      date.getDate()
+                  )
+                  ?.map((classDetails) => {
+                    return (
+                      <ClassDetails
+                        older={false}
+                        classDetails={classDetails}
+                        key={classDetails.id}
+                      />
+                    );
+                  })}
             <p className="md:col-span-3">Older Classes</p>
-            {data?.classes
-              .filter(
-                (classDetails) =>
-                  new Date(classDetails.startTime).getDate() < date.getDate()
-              )
-              .map((classDetails) => {
-                return (
-                  <ClassDetails
-                    classDetails={classDetails}
-                    key={classDetails.id}
-                  />
-                );
-              })}
+            {!data || data === undefined || data?.classes?.length === 0
+              ? "No classes yet"
+              : data?.classes
+                  ?.filter(
+                    (classDetails) =>
+                      new Date(classDetails.startTime).getDate() <
+                      date.getDate()
+                  )
+                  ?.map((classDetails) => {
+                    return (
+                      <ClassDetails
+                        older={true}
+                        classDetails={classDetails}
+                        key={classDetails.id}
+                      />
+                    );
+                  })}
           </>
         ) : (
           <p>No classes yet</p>

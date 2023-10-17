@@ -10,18 +10,18 @@ import {
   Section,
   Tailwind,
   Text,
-} from "@react-email/components"
+} from "@react-email/components";
 
 const NewUserEmail = ({
   email,
   name,
   password,
 }: {
-  email: string
-  name: string
-  password: string
+  email: string;
+  name: string;
+  password: string;
 }) => {
-  const previewText = `${name} , welcome to rfid attendance system...`
+  const previewText = `${name} , welcome to rfid attendance system...`;
 
   return (
     <Html>
@@ -44,7 +44,7 @@ const NewUserEmail = ({
             </Text>
             <Section className="mb-[32px] mt-[32px] text-center">
               <Link
-                href="http://localhost:3000"
+                href={process.env.NEXT_PUBLIC_URL}
                 className="rounded border border-solid bg-[#000000] px-6 py-4 text-center text-[12px] font-semibold text-white no-underline"
               >
                 Login
@@ -69,7 +69,7 @@ const NewUserEmail = ({
         </Body>
       </Tailwind>
     </Html>
-  )
-}
+  );
+};
 
-export default NewUserEmail
+export default NewUserEmail;
