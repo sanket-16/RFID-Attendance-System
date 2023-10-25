@@ -47,6 +47,8 @@ export default async function handler(
 
       const something = await transporter.sendMail(options);
       console.log(something);
+      prisma.$disconnect();
+
       return res.json({
         user: {
           firstName: user.firstName,
@@ -56,6 +58,8 @@ export default async function handler(
         },
       });
     } catch (error: any) {
+      prisma.$disconnect();
+
       console.log(error);
       res.send({ message: error.message });
     }

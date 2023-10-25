@@ -68,6 +68,8 @@ export default async function handler(
       },
     });
     const classes = student?.classes;
+    prisma.$disconnect();
+
     res.status(200).json({ classes });
   }
 }

@@ -34,6 +34,7 @@ export default async function handler(
         _count: true,
       },
     });
+    prisma.$disconnect();
 
     if (!classDetails) {
       res.status(200).json({ message: "No class found" });

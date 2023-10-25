@@ -110,7 +110,10 @@ export default async function handler(
         res.status(200).json({ message: "Successfully recorded attendance." });
       }
     }
+    prisma.$disconnect();
   } catch (error) {
+    prisma.$disconnect();
+
     res.status(400).json({ message: "Something went wrong." });
 
     console.error(error);

@@ -26,6 +26,8 @@ export default async function handler(
         studentId: session?.user.id,
       },
     });
+    prisma.$disconnect();
+
     res.status(200).json({ records });
   }
 }

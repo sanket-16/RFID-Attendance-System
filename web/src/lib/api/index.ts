@@ -9,6 +9,7 @@ import getStudentClasses from "./student/getClasses";
 import getOlderClasses from "./student/getOlderClasses";
 import getAttendanceRecords from "./student/getAttendanceRecords";
 import getAllStudents from "./student/getAll";
+import getSingleStudent from "./teacher/getSingleStudent";
 export {
   getAllStudents,
   createNewUser,
@@ -22,4 +23,5 @@ export {
   getOlderClasses,
   getAttendanceRecords,
   createNewTeacher,
+  getSingleStudent,
 };

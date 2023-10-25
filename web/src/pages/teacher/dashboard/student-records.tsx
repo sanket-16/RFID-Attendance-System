@@ -5,7 +5,7 @@ import {
   CardDescription,
   CardTitle,
 } from "@/components/ui/card";
-import { getAllStudents } from "@/lib/api";
+import { getAllStudents, getSingleStudent } from "@/lib/api";
 import { Student } from "@prisma/client";
 import {
   Dialog,
@@ -18,6 +18,13 @@ import {
 } from "@/components/ui/dialog";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const StudentRecords = () => {
   const { data: studentData, status: studentStatus } = useQuery({
@@ -47,11 +54,11 @@ export default StudentRecords;
 
 const StudentDetails = ({ student }: { student: Student }) => {
   const [open, setOpen] = useState(false);
-  // const { data, status } = useQuery({
-  //   queryKey: ["getStudentRecords"],
-  //   queryFn: () => getClass({ id: classDetails.id }),
-  //   enabled: open,
-  // });
+  const { data, status } = useQuery({
+    queryKey: ["getStudentRecords"],
+    queryFn: () => getSingleStudent({ id: student.id }),
+    enabled: open,
+  });
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
@@ -81,7 +88,20 @@ const StudentDetails = ({ student }: { student: Student }) => {
           </DialogTitle>
           <DialogDescription> {student.email}</DialogDescription>
         </DialogHeader>
-        <div></div>
+        <div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Sr No</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+
+                <TableHead>Options</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody></TableBody>
+          </Table>
+        </div>
       </DialogContent>
     </Dialog>
   );

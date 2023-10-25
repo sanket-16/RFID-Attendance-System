@@ -125,10 +125,13 @@ export default async function handler(
         };
         const something = await transporter.sendMail(options);
       });
+      prisma.$disconnect();
 
       res.status(200).json({ message: "Successfully sent mail." });
     }
   } catch (error) {
+    prisma.$disconnect();
+
     res.status(400).json({ message: "Something went wrong." });
 
     console.log(error);
