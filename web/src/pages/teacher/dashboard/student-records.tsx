@@ -47,11 +47,11 @@ export default StudentRecords;
 
 const StudentDetails = ({ student }: { student: Student }) => {
   const [open, setOpen] = useState(false);
-  const { data, status } = useQuery({
-    queryKey: ["getStudentRecords"],
-    queryFn: () => getClass({ id: classDetails.id }),
-    enabled: open,
-  });
+  // const { data, status } = useQuery({
+  //   queryKey: ["getStudentRecords"],
+  //   queryFn: () => getClass({ id: classDetails.id }),
+  //   enabled: open,
+  // });
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
