@@ -17,7 +17,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useState } from "react";
 
 const StudentRecords = () => {
   const { data: studentData, status: studentStatus } = useQuery({
@@ -46,8 +46,14 @@ const StudentRecords = () => {
 export default StudentRecords;
 
 const StudentDetails = ({ student }: { student: Student }) => {
+  const [open, setOpen] = useState(false);
+  // const { data, status } = useQuery({
+  //   queryKey: ["getStudentRecords"],
+  //   queryFn: () => getClass({ id: classDetails.id }),
+  //   enabled: open,
+  // });
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
         <Card className="p-2 hover:bg-secondary" onClick={() => {}}>
           <CardContent className="flex items-center justify-between">
@@ -75,6 +81,7 @@ const StudentDetails = ({ student }: { student: Student }) => {
           </DialogTitle>
           <DialogDescription> {student.email}</DialogDescription>
         </DialogHeader>
+        <div></div>
       </DialogContent>
     </Dialog>
   );
