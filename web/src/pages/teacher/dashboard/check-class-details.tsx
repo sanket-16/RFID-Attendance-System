@@ -143,6 +143,8 @@ const ClassDetails = ({
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
                   {older && <TableHead>Attendance</TableHead>}
+                  <TableHead>Predent %</TableHead>
+                  <TableHead>Absent %</TableHead>
                   <TableHead>Options</TableHead>
                 </TableRow>
               </TableHeader>
@@ -199,6 +201,30 @@ const ClassDetails = ({
                             )}
                         </TableCell>
                       )}
+                      
+                      <TableCell className="text-center font-bold">
+                        {data?.classDetails?._count?.students !== 0
+                          ? (
+                              (filteredRecord?.length /
+                                data?.classDetails?._count?.students) *
+                              100
+                            ).toFixed(2)
+                          : 0}
+                        %
+                      </TableCell>
+
+                      <TableCell className="text-center font-bold">
+                        {data?.classDetails?._count?.students !== 0
+                          ? (
+                              ((data?.classDetails?._count?.students -
+                                filteredRecord?.length) /
+                                data?.classDetails?._count?.students) *
+                              100
+                            ).toFixed(2)
+                          : 0}
+                        %
+                      </TableCell>
+
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger>
@@ -267,7 +293,7 @@ const ClassDetails = ({
         </div>
         <DialogFooter>
           <Button onClick={() => setHidden((val) => !val)}>
-            Add Student to class
+            {hidden ? "Hide" : "Add Student to class"}
           </Button>
           <Button variant={"outline"}>Delete Class</Button>
         </DialogFooter>
