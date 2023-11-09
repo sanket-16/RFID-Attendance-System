@@ -26,6 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from "recharts";
 
 const StudentRecords = () => {
   const { data: studentData, status: studentStatus } = useQuery({
@@ -53,22 +54,50 @@ const StudentRecords = () => {
 
 export default StudentRecords;
 
+type PieData = { name: string; data: number };
+const COLORS = ["#00FF00", "#FF0000"];
+
 const StudentDetails = ({ student }: { student: Student }) => {
   const [open, setOpen] = useState(false);
-  const { data, status } = useQuery({
+  const [totalClasses, setTotalClasses] = useState<number>(0);
+  const [presentData, setPresentData] = useState<number>(0);
+  const [absentData, setAbsentData] = useState<number>(0);
+  const [presentPercentage, setPresentPercentage] = useState<number>(0);
+  const [absentPercentage, setAbsentPercentage] = useState<number>(0);
+  const { data, status, isFetching, isRefetching } = useQuery({
     queryKey: ["getStudentRecords"],
     queryFn: () => getSingleStudent({ id: student.id }),
     enabled: open,
   });
-  const totalClasses = data?.student._count.classes;
-  const presentData = data?.student._count.attendanceRecords;
-  const absentData = totalClasses - presentData;
-  const presentPercentage = Math.round((presentData / totalClasses) * 100);
-  const absentPercentage = Math.round((absentData / totalClasses) * 100);
-  return (<>
+  const [pieData, setPieData] = useState<PieData[]>([]);
+  useEffect(() => {
+    if (status === "error" || status === "loading") {
+    }
+    if (status === "success") {
+      setTotalClasses(data?.student._count.classes);
+      setPresentData(data?.student._count.attendanceRecords);
+      setAbsentData(totalClasses - presentData);
+      setPresentPercentage(Math.round((presentData / totalClasses) * 100));
+      setAbsentPercentage(Math.round((absentData / totalClasses) * 100));
+      setPieData([
+        { name: "PresentData", data: presentData },
+        { name: "AbsentData", data: absentData },
+      ]);
+    }
+  }, [
+    status,
+    totalClasses,
+    absentData,
+    presentData,
+    absentPercentage,
+    presentPercentage,
+    open,
+    data,
+  ]);
+  return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
-        <Card className="p-2 hover:bg-secondary" onClick={() => { }}>
+        <Card className="p-2 hover:bg-secondary" onClick={() => {}}>
           <CardContent className="flex items-center justify-between">
             <span>
               {student.firstName +
@@ -94,56 +123,74 @@ const StudentDetails = ({ student }: { student: Student }) => {
           </DialogTitle>
           <DialogDescription> {student.email}</DialogDescription>
         </DialogHeader>
-        <div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Sr No</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Present %</TableHead>
-                <TableHead>Absent %</TableHead>
-                {/* <TableHead>Options</TableHead> */}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell>
-                  {1}
-                </TableCell>
-                <TableCell>
-                  {data?.student.firstName + " " + data?.student.middleName + " " + data?.student.lastName}
-                </TableCell>
+        {(status === "loading" || isFetching || isRefetching) && (
+          <p className="p-10 text-center">loading...</p>
+        )}
+        {status === "success" && (!isFetching || !isRefetching) && (
+          <div className="w-full">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Total Classes</TableHead>
+                  <TableHead>Present Classes</TableHead>
+                  <TableHead>Absent Classes</TableHead>
+                  <TableHead>Present %</TableHead>
+                  <TableHead>Absent %</TableHead>
+                  {/* <TableHead>Options</TableHead> */}
+                </TableRow>
+              </TableHeader>
+              <TableBody className="text-center">
+                <TableRow>
+                  <TableCell>{data?.student._count.classes}</TableCell>
+                  <TableCell>{presentData}</TableCell>
+                  <TableCell>{absentData}</TableCell>
 
-                <TableCell>
-                  {data?.student.email}
-                </TableCell>
-
-                <TableCell>
-                  {presentPercentage}
-                </TableCell>
-                <TableCell>
-                  {absentPercentage}
-                </TableCell>
-
-
-                {/* <TableCell>
-                <button   className="btn btn-primary">View</button>
-              </TableCell> */}
-
-
-
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
+                  <TableCell className="font-bold text-green-500">
+                    {presentPercentage}%
+                  </TableCell>
+                  <TableCell className="font-bold text-red-500">
+                    {absentPercentage}%
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+            <div className="grid  grid-cols-2 place-items-center ">
+              <div className="flex flex-col gap-4">
+                <p>Student Data</p>
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 border border-white bg-green-500"></div>
+                  <p>Present Percentage</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 border border-white bg-red-500"></div>
+                  <p>Absent Percentage</p>
+                </div>
+              </div>
+              <ResponsiveContainer width={400} height={400}>
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx={120}
+                    cy={200}
+                    innerRadius={60}
+                    outerRadius={80}
+                    fill="#ffffff"
+                    paddingAngle={5}
+                    dataKey="data"
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
-
-
-
-
-  </>
-
   );
 };

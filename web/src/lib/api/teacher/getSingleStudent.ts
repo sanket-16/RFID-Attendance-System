@@ -1,34 +1,22 @@
 import { AttendanceRecord, Class, Student } from "@prisma/client";
 
 type Data = {
-    student : {
-      UID : string
-      attendanceRecords :{
-        entryTime: string
-        exitTime: string
-        id : string
-        studentId : string
-      }
-      classes : {
-        id: string
-        startTime: string
-        subject: string
-        teacher: string
-        title: string
-      }
-      email : string
-      firstName : string
-      id : string
-      image : string
-      lastName : string
-      middleName : string
-      _count : {
-          attendanceRecords : number
-          classes : number
-      }
-    }
-
-}
+  student: {
+    UID: string;
+    attendanceRecords: AttendanceRecord[];
+    classes: Class[];
+    email: string;
+    firstName: string;
+    id: string;
+    image: string;
+    lastName: string;
+    middleName: string;
+    _count: {
+      attendanceRecords: number;
+      classes: number;
+    };
+  };
+};
 const getSingleStudent = async ({ id }: { id: string }): Promise<Data> => {
   const res = await fetch("/api/teacher/get-single-student", {
     method: "POST",

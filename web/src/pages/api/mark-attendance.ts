@@ -68,7 +68,10 @@ export default async function handler(
             email: String(user?.email),
             name:
               user?.firstName + " " + user?.middleName + " " + user?.lastName,
-            message: `Your exit time has been recorded at ${now.toLocaleString()}`,
+            message: `Your exit time has been recorded at ${now.toLocaleString(
+              undefined,
+              { timeZone: "Asia/Kolkata" }
+            )}}`,
           })
         );
 
@@ -96,7 +99,10 @@ export default async function handler(
             email: String(user?.email),
             name:
               user?.firstName + " " + user?.middleName + " " + user?.lastName,
-            message: `Your entry time has been recorded at ${now.toLocaleString()}`,
+            message: `Your entry time has been recorded at ${now.toLocaleString(
+              undefined,
+              { timeZone: "Asia/Kolkata" }
+            )}`,
           })
         );
 

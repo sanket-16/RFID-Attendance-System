@@ -69,7 +69,7 @@ const ClassDetails = ({
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [filter, setFilter] = useState("");
-  const { data, status } = useQuery({
+  const { data, status, isFetching, isRefetching } = useQuery({
     queryKey: ["getClass", classDetails],
     queryFn: () => getClass({ id: classDetails.id }),
     enabled: open,
@@ -129,168 +129,181 @@ const ClassDetails = ({
           <DialogTitle>{classDetails.title}</DialogTitle>
           <DialogDescription>{classDetails.subject}</DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4">
-          <p>Number of Students : {data?.classDetails?._count?.students}</p>
-          <p>Time : {date.toLocaleString()}</p>
-          <p>Students : </p>
-          {data?.classDetails.students.length === 0 ? (
-            <p>No students added</p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[100px]">Sr No</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  {older && <TableHead>Attendance</TableHead>}
-                  <TableHead>Predent %</TableHead>
-                  <TableHead>Absent %</TableHead>
-                  <TableHead>Options</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data?.classDetails.students.map((student, index) => {
-                  const { date, month, year } = getDateDetails(
-                    classDetails.startTime
-                  );
-
-                  const filteredRecord = student?.attendanceRecords?.filter(
-                    (record) => {
-                      const {
-                        date: recordDate,
-                        month: recordMonth,
-                        year: recordYear,
-                      } = getDateDetails(record.entryTime);
-                      if (
-                        recordDate === date &&
-                        recordMonth === month &&
-                        recordYear === year
-                      ) {
-                        return record;
-                      }
-                    }
-                  );
-                  console.log(filteredRecord);
-                  return (
-                    <TableRow key={student.id}>
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>
-                        {student.firstName + student.lastName}
-                      </TableCell>
-                      <TableCell>{student.email}</TableCell>
+        {(status === "loading" || isRefetching || isFetching) && (
+          <p className="p-8 text-center">Loading...</p>
+        )}
+        {status === "success" && (!isRefetching || !isFetching) && (
+          <>
+            <div className="flex flex-col gap-4">
+              <p>Number of Students : {data?.classDetails?._count?.students}</p>
+              <p>Time : {date.toLocaleString()}</p>
+              <p>Students : </p>
+              {data?.classDetails.students.length === 0 ? (
+                <p>No students added</p>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[100px]">Sr No</TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Email</TableHead>
                       {older && (
-                        <TableCell className="text-center font-bold">
-                          {(filteredRecord === undefined ||
-                            !filteredRecord ||
-                            filteredRecord.length === 0) && (
-                            <span className="text-red-500">A</span>
-                          )}
-                          {filteredRecord.length !== 0 &&
-                            filteredRecord[0].entryTime <
-                              classDetails.startTime &&
-                            filteredRecord[0].exitTime >
-                              classDetails.startTime && (
-                              <span className="text-green-500">P</span>
-                            )}
-                          {filteredRecord.length !== 0 &&
-                            (filteredRecord[0].entryTime >
-                              classDetails.startTime ||
-                              filteredRecord[0].exitTime <
-                                classDetails.startTime) && (
-                              <span className="text-red-500">A</span>
-                            )}
-                        </TableCell>
+                        <>
+                          <TableHead>Attendance</TableHead>
+                          <TableHead>Present %</TableHead>
+                          <TableHead>Absent %</TableHead>
+                        </>
                       )}
-                      
-                      <TableCell className="text-center font-bold">
-                        {data?.classDetails?._count?.students !== 0
-                          ? (
-                              (filteredRecord?.length /
-                                data?.classDetails?._count?.students) *
-                              100
-                            ).toFixed(2)
-                          : 0}
-                        %
-                      </TableCell>
-
-                      <TableCell className="text-center font-bold">
-                        {data?.classDetails?._count?.students !== 0
-                          ? (
-                              ((data?.classDetails?._count?.students -
-                                filteredRecord?.length) /
-                                data?.classDetails?._count?.students) *
-                              100
-                            ).toFixed(2)
-                          : 0}
-                        %
-                      </TableCell>
-
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger>
-                            <MoreVertical />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                            <DropdownMenuLabel className="font-sm text-bold text-muted-foreground">
-                              Options
-                            </DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="flex items-center gap-2 text-red-500">
-                              <Trash2 size={14} /> Remove
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
+                      <TableHead>Options</TableHead>
                     </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          )}
-          {hidden && (
-            <>
-              <Input
-                placeholder="Search for student name"
-                value={filter}
-                onChange={(event) => setFilter(event.target.value)}
-              />
-              <ScrollArea className="h-32">
-                {studentStatus === "error" && "Something went wrong"}
-                {studentStatus === "loading" && "Loading..."}
-                {studentStatus === "success" && (
-                  <div className="flex flex-col gap-4 px-4">
-                    {studentData.students.map((student) => (
-                      <Card
-                        key={student.id}
-                        className="p-2 hover:bg-secondary"
-                        onClick={() =>
-                          mutate.mutateAsync({
-                            id: classDetails.id,
-                            studentId: student.id,
-                          })
+                  </TableHeader>
+                  <TableBody>
+                    {data?.classDetails.students.map((student, index) => {
+                      const { date, month, year } = getDateDetails(
+                        classDetails.startTime
+                      );
+
+                      const filteredRecord = student?.attendanceRecords?.filter(
+                        (record) => {
+                          const {
+                            date: recordDate,
+                            month: recordMonth,
+                            year: recordYear,
+                          } = getDateDetails(record.entryTime);
+                          if (
+                            recordDate === date &&
+                            recordMonth === month &&
+                            recordYear === year
+                          ) {
+                            return record;
+                          }
                         }
-                      >
-                        <CardContent className="flex items-center justify-between">
-                          <span>
-                            {student.firstName +
-                              " " +
-                              student.middleName +
-                              " " +
-                              student.lastName}
-                          </span>
-                          <span className="text-sm font-bold text-muted-foreground">
-                            {student.email}
-                          </span>
-                        </CardContent>
-                      </Card>
-                    ))}
-                    {studentData?.students.length === 0 && "No students"}
-                  </div>
-                )}
-              </ScrollArea>
-            </>
-          )}
-        </div>
+                      );
+                      console.log(filteredRecord);
+                      return (
+                        <TableRow key={student.id}>
+                          <TableCell>{index + 1}</TableCell>
+                          <TableCell>
+                            {student.firstName + student.lastName}
+                          </TableCell>
+                          <TableCell>{student.email}</TableCell>
+                          {older && (
+                            <>
+                              <TableCell className="text-center font-bold">
+                                {(filteredRecord === undefined ||
+                                  !filteredRecord ||
+                                  filteredRecord.length === 0) && (
+                                  <span className="text-red-500">A</span>
+                                )}
+                                {filteredRecord.length !== 0 &&
+                                  filteredRecord[0].entryTime <
+                                    classDetails.startTime &&
+                                  filteredRecord[0].exitTime >
+                                    classDetails.startTime && (
+                                    <span className="text-green-500">P</span>
+                                  )}
+                                {filteredRecord.length !== 0 &&
+                                  (filteredRecord[0].entryTime >
+                                    classDetails.startTime ||
+                                    filteredRecord[0].exitTime <
+                                      classDetails.startTime) && (
+                                    <span className="text-red-500">A</span>
+                                  )}
+                              </TableCell>
+                              <TableCell className="text-center font-bold">
+                                {data?.classDetails?._count?.students !== 0
+                                  ? (
+                                      (filteredRecord?.length /
+                                        data?.classDetails?._count?.students) *
+                                      100
+                                    ).toFixed(2)
+                                  : 0}
+                                %
+                              </TableCell>
+
+                              <TableCell className="text-center font-bold">
+                                {data?.classDetails?._count?.students !== 0
+                                  ? (
+                                      ((data?.classDetails?._count?.students -
+                                        filteredRecord?.length) /
+                                        data?.classDetails?._count?.students) *
+                                      100
+                                    ).toFixed(2)
+                                  : 0}
+                                %
+                              </TableCell>
+                            </>
+                          )}
+
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger>
+                                <MoreVertical />
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent>
+                                <DropdownMenuLabel className="font-sm text-bold text-muted-foreground">
+                                  Options
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className="flex items-center gap-2 text-red-500">
+                                  <Trash2 size={14} /> Remove
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              )}
+              {hidden && (
+                <>
+                  <Input
+                    placeholder="Search for student name"
+                    value={filter}
+                    onChange={(event) => setFilter(event.target.value)}
+                  />
+                  <ScrollArea className="h-32">
+                    {studentStatus === "error" && "Something went wrong"}
+                    {studentStatus === "loading" && "Loading..."}
+                    {studentStatus === "success" && (
+                      <div className="flex flex-col gap-4 px-4">
+                        {studentData.students.map((student) => (
+                          <Card
+                            key={student.id}
+                            className="p-2 hover:bg-secondary"
+                            onClick={() => {
+                              mutate.mutateAsync({
+                                id: classDetails.id,
+                                studentId: student.id,
+                              });
+                              queryClient.invalidateQueries(["getClass"]);
+                            }}
+                          >
+                            <CardContent className="flex items-center justify-between">
+                              <span>
+                                {student.firstName +
+                                  " " +
+                                  student.middleName +
+                                  " " +
+                                  student.lastName}
+                              </span>
+                              <span className="text-sm font-bold text-muted-foreground">
+                                {student.email}
+                              </span>
+                            </CardContent>
+                          </Card>
+                        ))}
+                        {studentData?.students.length === 0 && "No students"}
+                      </div>
+                    )}
+                  </ScrollArea>
+                </>
+              )}
+            </div>
+          </>
+        )}
         <DialogFooter>
           <Button onClick={() => setHidden((val) => !val)}>
             {hidden ? "Hide" : "Add Student to class"}
@@ -363,11 +376,11 @@ const CheckClassDetails = () => {
             {!data || data === undefined || data?.classes?.length === 0
               ? "No classes yet"
               : data?.classes
-                  ?.filter(
-                    (classDetails) =>
-                      new Date(classDetails.startTime).getDate() <
-                      date.getDate()
-                  )
+                  // .filter(
+                  //   (classDetails) =>
+                  //     new Date(classDetails.startTime).getDate() <
+                  //     date.getDate()
+                  // )
                   ?.map((classDetails) => {
                     return (
                       <ClassDetails
